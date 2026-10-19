@@ -1,10 +1,17 @@
 import Link from "next/link";
+import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {
   className?: string;
   /** Larger treatment for the hero */
   size?: "nav" | "hero";
+  /**
+   * `full` = Elie Daher (hero, footer).
+   * `short` = Daher (compact nav only).
+   * Defaults: hero → full, nav → short.
+   */
+  wordmark?: "full" | "short";
   /** Pass `null` for a non-linked mark (e.g. hero). Defaults to `/`. */
   href?: string | null;
 };
@@ -15,7 +22,16 @@ type LogoProps = {
  * 1. Drop your file at `public/logo.svg` (or `.png`)
  * 2. Swap the inner markup below for an <Image> / <img> of that file
  */
-export function Logo({ className, size = "nav", href = "/" }: LogoProps) {
+export function Logo({
+  className,
+  size = "nav",
+  wordmark,
+  href = "/",
+}: LogoProps) {
+  const label =
+    wordmark ?? (size === "hero" ? "full" : "short");
+  const text = label === "full" ? site.brand : site.brandShort;
+
   const mark = (
     <span
       className={cn(
@@ -23,7 +39,7 @@ export function Logo({ className, size = "nav", href = "/" }: LogoProps) {
         size === "hero" && "gap-4",
         className,
       )}
-      aria-label="Daher"
+      aria-label={site.brand}
     >
       <svg
         aria-hidden
@@ -61,11 +77,13 @@ export function Logo({ className, size = "nav", href = "/" }: LogoProps) {
         className={cn(
           "font-[family-name:var(--font-display)] tracking-[-0.03em] leading-none",
           size === "hero"
-            ? "text-5xl sm:text-6xl md:text-7xl"
-            : "text-xl sm:text-2xl",
+            ? "text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
+            : label === "full"
+              ? "text-lg sm:text-xl"
+              : "text-xl sm:text-2xl",
         )}
       >
-        Daher
+        {text}
       </span>
     </span>
   );

@@ -5,7 +5,10 @@
  */
 
 export const site = {
-  brand: "Daher",
+  /** Primary brand / person name — use site-wide */
+  brand: "Elie Daher",
+  /** Short mark for compact nav only */
+  brandShort: "Daher",
   tagline: "Private real estate, handled with care.",
   heroSupport:
     "Local guidance for renting, buying, and looking after the places that matter.",
@@ -15,8 +18,8 @@ export const site = {
   },
   /** PLACEHOLDER — short about copy */
   about: {
-    heading: "About Daher",
-    body: "Daher is a private real-estate practice focused on clear advice and careful follow-through. Whether you need a well-matched rental, a thorough inspection before you commit, or steady help managing a property, the work stays personal — one client, one property, one conversation at a time.",
+    heading: "About Elie Daher",
+    body: "Elie Daher is a private real-estate practice focused on clear advice and careful follow-through. Whether you need a well-matched rental, a thorough inspection before you commit, or steady help managing a property, the work stays personal — one client, one property, one conversation at a time.",
     note: "Placeholder about copy — replace with the real bio",
   },
   /** PLACEHOLDER — services list */

@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="border-t border-[var(--brand-line)] bg-[var(--brand-surface)]">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-end sm:justify-between sm:px-8">
         <div className="space-y-3">
-          <Logo size="nav" />
+          <Logo size="nav" wordmark="full" />
           <p className="max-w-sm text-sm leading-relaxed text-[var(--brand-muted)]">
             {site.tagline}
           </p>

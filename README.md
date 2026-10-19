@@ -1,6 +1,6 @@
-# Daher
+# Elie Daher
 
-Private real-estate website for Daher — a warm, place-rooted site with a home page and a rentals listing page. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+Private real-estate website for Elie Daher — a warm, place-rooted site with a home page and a rentals listing page. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Run locally
 

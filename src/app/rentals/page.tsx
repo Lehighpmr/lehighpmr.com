@@ -1,32 +1,39 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { RentalsBrowser } from "@/components/rentals/rentals-browser";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Rentals",
+  title: "Available Rentals",
   description: `Homes and flats currently available through ${site.brand}, led by ${site.person}.`,
 };
 
 export default function RentalsPage() {
   return (
-    <div className="pb-20 pt-10">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <header className="max-w-2xl daher-animate-fade-up">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--brand-accent)]">
-            Available to rent
+    <div className="pb-16">
+      <div className="border-b border-[var(--brand-line)] bg-[var(--brand-surface-soft)] px-4 py-10 sm:px-6 sm:py-12">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-accent)]">
+            {site.brandShort} rentals
           </p>
-          <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl tracking-[-0.02em] text-[var(--brand-ink)] sm:text-5xl">
-            Current rentals
+          <h1 className="mt-2 text-3xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)] sm:text-4xl">
+            Available rentals
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-[var(--brand-muted)] sm:text-lg">
-            A short list of places ready for viewing. Details and photos are
-            samples until live inventory is connected.
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--brand-muted)]">
+            Sample listings for layout — replace with live inventory when ready.
+            Prefer to list with us?{" "}
+            <Link
+              href="/#contact"
+              className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
+            >
+              Contact {site.person}
+            </Link>
+            .
           </p>
-        </header>
-
-        <div className="mt-12">
-          <RentalsBrowser />
         </div>
+      </div>
+      <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+        <RentalsBrowser />
       </div>
     </div>
   );

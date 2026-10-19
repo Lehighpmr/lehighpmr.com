@@ -5,22 +5,17 @@ import { cn } from "@/lib/utils";
 
 type LogoProps = {
   className?: string;
-  /** Larger treatment for the hero */
   size?: "nav" | "hero" | "footer";
-  /** Pass `null` for a non-linked mark (e.g. hero). Defaults to `/`. */
   href?: string | null;
   priority?: boolean;
 };
 
 const sizeClass = {
-  nav: "h-11 w-auto sm:h-12",
-  footer: "h-14 w-auto sm:h-16",
-  hero: "h-auto w-full max-w-[22rem] sm:max-w-[28rem] md:max-w-[34rem]",
+  nav: "h-12 w-auto max-w-[200px] sm:h-14 sm:max-w-[240px]",
+  footer: "h-14 w-auto max-w-[220px] brightness-0 invert",
+  hero: "h-auto w-full max-w-[18rem] sm:max-w-[22rem]",
 } as const;
 
-/**
- * Official Lehigh logo. Replace `public/brand/lehigh-logo.jpg` to update.
- */
 export function Logo({
   className,
   size = "nav",
@@ -34,12 +29,7 @@ export function Logo({
       width={2048}
       height={682}
       priority={priority || size === "hero"}
-      className={cn(
-        "object-contain object-left",
-        sizeClass[size],
-        size === "hero" && "drop-shadow-sm",
-        className,
-      )}
+      className={cn("object-contain object-left", sizeClass[size], className)}
     />
   );
 

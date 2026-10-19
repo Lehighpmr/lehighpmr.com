@@ -18,10 +18,10 @@ const body = Figtree({
 
 export const metadata: Metadata = {
   title: {
-    default: `${site.brand} — Private real estate`,
+    default: `${site.brand} · ${site.person}`,
     template: `%s · ${site.brand}`,
   },
-  description: site.heroSupport,
+  description: `${site.tagline}. ${site.heroSupport}`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

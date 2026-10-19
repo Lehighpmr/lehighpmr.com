@@ -4,12 +4,12 @@ import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Rentals",
-  description: `Homes and flats currently available through ${site.brand}.`,
+  description: `Homes and flats currently available through ${site.brand}, led by ${site.person}.`,
 };
 
 export default function RentalsPage() {
   return (
-    <div className="pt-24 pb-20">
+    <div className="pb-20 pt-10">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <header className="max-w-2xl daher-animate-fade-up">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--brand-accent)]">

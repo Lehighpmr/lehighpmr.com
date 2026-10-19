@@ -1,6 +1,6 @@
-# Elie Daher
+# Lehigh Property Management & Realty
 
-Private real-estate website for Elie Daher — a warm, place-rooted site with a home page and a rentals listing page. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+Website for **Lehigh Property Management & Realty** (Elie Daher) — home page plus rentals listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Run locally
 
@@ -22,18 +22,17 @@ npm start
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Brand-first home: hero, services, about, address, CTA to rentals |
+| `/` | Brand-first home: logo hero, services, about, address, CTA to rentals |
 | `/rentals` | Sample listings with search/filters and an empty state |
 
-## Swapping placeholders
+## Brand assets & copy
 
 | What | File |
 | --- | --- |
-| Logo / wordmark | `src/components/brand/logo.tsx` (or drop `public/logo.svg` and point the component at it) |
-| Brand copy, about, services, contact | `src/content/site.ts` |
-| Office address (set) | `src/content/site.ts` → `address` |
+| Logo | `public/brand/lehigh-logo.jpg` (wired in `src/components/brand/logo.tsx`) |
+| Business name, person, tagline, address, about, services, contact | `src/content/site.ts` |
 | Rental listings | `src/data/listings.ts` |
 | Hero photo | `public/images/hero.jpg` |
 | Listing photos | `public/images/listings/*.jpg` |
 
-Placeholder notes are marked in the UI so real content is easy to spot.
+Office address is set to **779 3rd St, Whitehall, PA 18052**. About/services copy is still marked as placeholder until real content arrives.

@@ -27,14 +27,14 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 sm:px-8 sm:pb-20 md:justify-center md:pb-24">
-          <div className="max-w-xl text-[#f4f1ea]">
-            <div className="daher-animate-fade-up [&_span]:text-[#f4f1ea] [&_svg]:text-[color-mix(in_oklab,#f4f1ea_85%,#9a7b4f)]">
-              <Logo size="hero" href={null} />
+          <div className="max-w-xl text-[#faf7f3]">
+            <div className="daher-animate-fade-up">
+              <Logo size="hero" href={null} priority />
             </div>
-            <h1 className="daher-animate-fade-up daher-delay-1 mt-6 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]">
-              {site.tagline}
+            <h1 className="daher-animate-fade-up daher-delay-1 mt-7 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]">
+              {site.heroHeadline}
             </h1>
-            <p className="daher-animate-fade-up daher-delay-2 mt-4 max-w-md text-base leading-relaxed text-[#f4f1ea]/90 sm:text-lg">
+            <p className="daher-animate-fade-up daher-delay-2 mt-4 max-w-md text-base leading-relaxed text-[#faf7f3]/90 sm:text-lg">
               {site.heroSupport}
             </p>
             <div className="daher-animate-fade-up daher-delay-3 mt-8 flex flex-wrap items-center gap-3">
@@ -42,7 +42,7 @@ export default function HomePage() {
                 href="/rentals"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "h-11 rounded-md bg-[#f4f1ea] px-5 text-[var(--brand-ink)] hover:bg-white",
+                  "h-11 rounded-md bg-[#faf7f3] px-5 text-[var(--brand-ink)] hover:bg-white",
                 )}
               >
                 {site.cta.primary}
@@ -51,7 +51,7 @@ export default function HomePage() {
                 href="/rentals"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "h-11 rounded-md border-[#f4f1ea]/45 bg-transparent px-5 text-[#f4f1ea] hover:bg-[#f4f1ea]/10 hover:text-[#f4f1ea]",
+                  "h-11 rounded-md border-[#faf7f3]/45 bg-transparent px-5 text-[#faf7f3] hover:bg-[#faf7f3]/10 hover:text-[#faf7f3]",
                 )}
               >
                 {site.cta.secondary}
@@ -71,7 +71,7 @@ export default function HomePage() {
               <PlaceholderNote className="mt-2">
                 {site.services.note}
               </PlaceholderNote>
-              <ul className="mt-6 space-y-3 border-l border-[var(--brand-accent)]/35 pl-5">
+              <ul className="mt-6 space-y-3 border-l border-[var(--brand-accent)]/40 pl-5">
                 {site.services.items.map((item) => (
                   <li
                     key={item}
@@ -108,10 +108,7 @@ export default function HomePage() {
               <div className="mt-8 md:flex md:justify-end">
                 <Link
                   href="/rentals"
-                  className={cn(
-                    buttonVariants(),
-                    "h-10 rounded-md px-4",
-                  )}
+                  className={cn(buttonVariants(), "h-10 rounded-md px-4")}
                 >
                   View current rentals
                 </Link>

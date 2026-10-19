@@ -35,4 +35,4 @@ npm start
 | Hero photo | `public/images/hero.jpg` |
 | Listing photos | `public/images/listings/*.jpg` |
 
-Office address is set to **779 3rd St, Whitehall, PA 18052**. About/services copy is still marked as placeholder until real content arrives.
+Office address is set to **779 3rd St, Whitehall, PA 18052**. Demo contact: **(610) 555-0148** / **hello@lehighpm.example**. About/services copy is still marked as placeholder until real content arrives.

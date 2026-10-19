@@ -105,6 +105,22 @@ export default function HomePage() {
               <p className="mt-1 text-lg text-[var(--brand-muted)]">
                 {site.address.line2}
               </p>
+              <p className="mt-4 text-base text-[var(--brand-ink)]">
+                <a
+                  href={`tel:${site.contact.phone.replace(/\D/g, "")}`}
+                  className="hover:text-[var(--brand-accent)]"
+                >
+                  {site.contact.phone}
+                </a>
+              </p>
+              <p className="mt-1 text-base text-[var(--brand-muted)]">
+                <a
+                  href={`mailto:${site.contact.email}`}
+                  className="hover:text-[var(--brand-accent)]"
+                >
+                  {site.contact.email}
+                </a>
+              </p>
               <div className="mt-8 md:flex md:justify-end">
                 <Link
                   href="/rentals"

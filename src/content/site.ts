@@ -43,10 +43,8 @@ export const site = {
     secondary: "See what’s available",
   },
   contact: {
-    /** PLACEHOLDER */
     email: "hello@lehighpm.example",
-    phone: "(555) 014-2280",
-    note: "Placeholder contact — update when ready",
+    phone: "(610) 555-0148",
   },
   logo: {
     src: "/brand/lehigh-logo.jpg",

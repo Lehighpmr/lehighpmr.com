@@ -23,9 +23,22 @@ export function SiteFooter() {
           <p className="mt-1">
             {site.address.line1}, {site.address.line2}
           </p>
-          <p className="mt-1">{site.contact.email}</p>
-          <p>{site.contact.phone}</p>
-          <p className="mt-2 text-xs italic opacity-80">{site.contact.note}</p>
+          <p className="mt-1">
+            <a
+              href={`tel:${site.contact.phone.replace(/\D/g, "")}`}
+              className="hover:text-[var(--brand-ink)]"
+            >
+              {site.contact.phone}
+            </a>
+          </p>
+          <p>
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="hover:text-[var(--brand-ink)]"
+            >
+              {site.contact.email}
+            </a>
+          </p>
         </div>
       </div>
     </footer>

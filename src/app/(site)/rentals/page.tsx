@@ -20,8 +20,8 @@ export default function RentalsPage() {
             Available rentals
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--brand-muted)]">
-            Sample listings for layout — replace with live inventory when ready.
-            Prefer to list with us?{" "}
+            Current homes available through {site.brand}. Prefer to list with
+            us?{" "}
             <Link
               href="/#contact"
               className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"

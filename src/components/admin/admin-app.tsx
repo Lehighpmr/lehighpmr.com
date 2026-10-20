@@ -80,9 +80,19 @@ export function AdminApp() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [blobConfigured, setBlobConfigured] = useState(true);
 
   const load = useCallback(async () => {
     setError("");
+    const me = await fetch("/api/admin/me", { credentials: "include" });
+    if (me.status === 401) {
+      window.location.href = "/admin/login";
+      return;
+    }
+    if (me.ok) {
+      const info = (await me.json()) as { blobConfigured?: boolean };
+      setBlobConfigured(Boolean(info.blobConfigured));
+    }
     const res = await fetch("/api/admin/listings", { credentials: "include" });
     if (res.status === 401) {
       window.location.href = "/admin/login";
@@ -364,7 +374,9 @@ export function AdminApp() {
             <p className="mt-1 text-xs text-[var(--brand-muted)]">
               {uploading
                 ? "Uploading…"
-                : "Uploads save to public/uploads (local preview). First image is the cover."}
+                : blobConfigured
+                  ? "Photos upload to Vercel Blob (max 4MB). First image is the cover."
+                  : "Local preview: photos save under public/uploads. On Vercel, connect a Blob store. First image is the cover."}
             </p>
             {form.images.length ? (
               <ul className="mt-3 flex flex-wrap gap-2">

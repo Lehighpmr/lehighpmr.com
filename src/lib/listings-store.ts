@@ -1,24 +1,74 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { head, put } from "@vercel/blob";
 import type { Listing, ListingInput, ListingStatus } from "@/lib/listings-types";
+import { usesBlobStorage } from "@/lib/storage";
 
-const DATA_PATH = path.join(process.cwd(), "data", "listings.json");
+const LOCAL_DATA_PATH = path.join(process.cwd(), "data", "listings.json");
+const BLOB_PATHNAME = "data/listings.json";
 
-async function ensureFile() {
+async function ensureLocalFile() {
   try {
-    await fs.access(DATA_PATH);
+    await fs.access(LOCAL_DATA_PATH);
   } catch {
-    await fs.mkdir(path.dirname(DATA_PATH), { recursive: true });
-    await fs.writeFile(DATA_PATH, "[]\n", "utf8");
+    await fs.mkdir(path.dirname(LOCAL_DATA_PATH), { recursive: true });
+    await fs.writeFile(LOCAL_DATA_PATH, "[]\n", "utf8");
   }
 }
 
-export async function readAllListings(): Promise<Listing[]> {
-  await ensureFile();
-  const raw = await fs.readFile(DATA_PATH, "utf8");
+async function readSeedListings(): Promise<Listing[]> {
+  try {
+    const raw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
+    const parsed = JSON.parse(raw) as Listing[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function readFromBlob(): Promise<Listing[]> {
+  try {
+    const meta = await head(BLOB_PATHNAME);
+    const res = await fetch(meta.url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Blob fetch failed (${res.status})`);
+    const parsed = (await res.json()) as Listing[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    const seed = await readSeedListings();
+    await writeToBlob(seed);
+    return seed;
+  }
+}
+
+async function writeToBlob(listings: Listing[]) {
+  await put(BLOB_PATHNAME, `${JSON.stringify(listings, null, 2)}\n`, {
+    access: "public",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+  });
+}
+
+async function readFromLocal(): Promise<Listing[]> {
+  await ensureLocalFile();
+  const raw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
   const parsed = JSON.parse(raw) as Listing[];
   return Array.isArray(parsed) ? parsed : [];
+}
+
+async function writeToLocal(listings: Listing[]) {
+  await ensureLocalFile();
+  await fs.writeFile(
+    LOCAL_DATA_PATH,
+    `${JSON.stringify(listings, null, 2)}\n`,
+    "utf8",
+  );
+}
+
+export async function readAllListings(): Promise<Listing[]> {
+  if (usesBlobStorage()) return readFromBlob();
+  return readFromLocal();
 }
 
 export async function readPublicListings(): Promise<Listing[]> {
@@ -27,8 +77,16 @@ export async function readPublicListings(): Promise<Listing[]> {
 }
 
 async function writeAll(listings: Listing[]) {
-  await ensureFile();
-  await fs.writeFile(DATA_PATH, `${JSON.stringify(listings, null, 2)}\n`, "utf8");
+  if (usesBlobStorage()) {
+    await writeToBlob(listings);
+    return;
+  }
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Writable storage is not configured. Create a Vercel Blob store and set BLOB_READ_WRITE_TOKEN (or connect the store for OIDC).",
+    );
+  }
+  await writeToLocal(listings);
 }
 
 function slugify(title: string) {
@@ -43,7 +101,10 @@ function normalize(input: ListingInput, existingId?: string): Listing {
   const images = (input.images || []).filter(Boolean);
   const status = (input.status || "listed") as ListingStatus;
   return {
-    id: existingId || input.id || `${slugify(input.title) || "listing"}-${randomUUID().slice(0, 8)}`,
+    id:
+      existingId ||
+      input.id ||
+      `${slugify(input.title) || "listing"}-${randomUUID().slice(0, 8)}`,
     title: String(input.title || "").trim(),
     neighborhood: String(input.neighborhood || "").trim(),
     area: String(input.area || "").trim(),
@@ -54,7 +115,9 @@ function normalize(input: ListingInput, existingId?: string): Listing {
     blurb: String(input.blurb || "").trim(),
     images: images.length ? images : [],
     available: String(input.available || "").trim(),
-    status: ["listed", "rented", "hidden"].includes(status) ? status : "listed",
+    status: ["listed", "rented", "hidden"].includes(status)
+      ? status
+      : "listed",
   };
 }
 

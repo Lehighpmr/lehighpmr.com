@@ -24,9 +24,11 @@ export async function POST(request: Request) {
     const listing = await createListing(body);
     return NextResponse.json({ listing }, { status: 201 });
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Could not create listing" },
-      { status: 400 },
-    );
+    const message =
+      e instanceof Error ? e.message : "Could not create listing";
+    const status = message.includes("Blob") || message.includes("storage")
+      ? 503
+      : 400;
+    return NextResponse.json({ error: message }, { status });
   }
 }

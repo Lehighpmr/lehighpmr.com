@@ -22,10 +22,12 @@ export async function PUT(request: Request, { params }: Params) {
     }
     return NextResponse.json({ listing });
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Could not update listing" },
-      { status: 400 },
-    );
+    const message =
+      e instanceof Error ? e.message : "Could not update listing";
+    const status = message.includes("Blob") || message.includes("storage")
+      ? 503
+      : 400;
+    return NextResponse.json({ error: message }, { status });
   }
 }
 
@@ -34,9 +36,21 @@ export async function DELETE(_request: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  const ok = await deleteListing(id);
-  if (!ok) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  try {
+    const ok = await deleteListing(id);
+    if (!ok) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Could not delete listing";
+    return NextResponse.json(
+      { error: message },
+      {
+        status:
+          message.includes("Blob") || message.includes("storage") ? 503 : 400,
+      },
+    );
   }
-  return NextResponse.json({ ok: true });
 }

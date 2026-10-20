@@ -4,19 +4,37 @@ import { cookies } from "next/headers";
 export const ADMIN_COOKIE = "lehigh_admin_session";
 const DEMO_PASSWORD = "lehigh-demo-2026";
 
-export function getAdminPassword() {
-  return process.env.ADMIN_PASSWORD || DEMO_PASSWORD;
-}
-
 export function getDefaultDemoPassword() {
   return DEMO_PASSWORD;
 }
 
-function sessionSecret() {
+export function isProductionDeploy() {
   return (
-    process.env.ADMIN_SESSION_SECRET ||
-    `lehigh-session:${getAdminPassword()}`
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.NODE_ENV === "production" && Boolean(process.env.VERCEL))
   );
+}
+
+/** True when production still uses the demo password or has none set. */
+export function hasInsecureProductionAuth() {
+  if (!isProductionDeploy()) return false;
+  const password = process.env.ADMIN_PASSWORD;
+  return !password || password === DEMO_PASSWORD;
+}
+
+export function getAdminPassword() {
+  return process.env.ADMIN_PASSWORD || DEMO_PASSWORD;
+}
+
+function sessionSecret() {
+  if (process.env.ADMIN_SESSION_SECRET) {
+    return process.env.ADMIN_SESSION_SECRET;
+  }
+  if (isProductionDeploy()) {
+    // Prefer an explicit secret in production; fall back to password-derived.
+    return `lehigh-session:${getAdminPassword()}:prod`;
+  }
+  return `lehigh-session:${getAdminPassword()}`;
 }
 
 export function createSessionToken() {

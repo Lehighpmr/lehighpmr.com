@@ -8,8 +8,23 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const listings = await readAllListings();
-  return NextResponse.json({ listings });
+  try {
+    const listings = await readAllListings();
+    return NextResponse.json(
+      { listings },
+      { headers: { "Cache-Control": "no-store, max-age=0" } },
+    );
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Could not load listings";
+    return NextResponse.json(
+      { error: message },
+      {
+        status:
+          message.includes("Blob") || message.includes("storage") ? 503 : 500,
+      },
+    );
+  }
 }
 
 export async function POST(request: Request) {

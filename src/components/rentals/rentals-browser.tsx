@@ -250,6 +250,7 @@ export function RentalsBrowser() {
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     sizes="(max-width: 768px) 100vw, 320px"
+                    unoptimized={primaryImage(listing).startsWith("http")}
                   />
                 </div>
                 <div className="flex flex-col justify-center">

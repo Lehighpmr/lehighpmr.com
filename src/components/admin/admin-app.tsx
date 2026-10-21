@@ -81,6 +81,7 @@ export function AdminApp() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [blobConfigured, setBlobConfigured] = useState(true);
+  const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setError("");
@@ -166,12 +167,14 @@ export function AdminApp() {
 
   async function removeListing(id: string) {
     if (!confirm("Remove this listing permanently?")) return;
+    setError("");
     const res = await fetch(`/api/admin/listings/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
     if (!res.ok) {
-      setError("Could not remove listing");
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(data?.error || "Could not remove listing");
       return;
     }
     if (editingId === id) cancelForm();
@@ -179,17 +182,46 @@ export function AdminApp() {
   }
 
   async function setStatus(listing: Listing, status: ListingStatus) {
+    setError("");
+    setStatusBusyId(listing.id);
+    const previous = listings;
+    // Optimistic UI — Hide / Mark rented should feel instant
+    setListings((all) =>
+      all.map((l) =>
+        l.id === listing.id
+          ? {
+              ...l,
+              status,
+              available:
+                status === "rented"
+                  ? "Rented"
+                  : status === "listed"
+                    ? l.available === "Rented"
+                      ? "Available now"
+                      : l.available
+                    : l.available,
+            }
+          : l,
+      ),
+    );
     const res = await fetch(`/api/admin/listings/${listing.id}`, {
-      method: "PUT",
+      method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...listing, status }),
+      body: JSON.stringify({ status }),
     });
     if (!res.ok) {
-      setError("Could not update status");
+      setListings(previous);
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(data?.error || "Could not update status");
+      setStatusBusyId(null);
       return;
     }
-    await load();
+    const data = (await res.json()) as { listing: Listing };
+    setListings((all) =>
+      all.map((l) => (l.id === data.listing.id ? data.listing : l)),
+    );
+    setStatusBusyId(null);
   }
 
   async function onUpload(fileList: FileList | null) {
@@ -453,6 +485,7 @@ export function AdminApp() {
                       fill
                       className="object-cover"
                       sizes="96px"
+                      unoptimized={primaryImage(listing).startsWith("http")}
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-[10px] text-[var(--brand-muted)]">
@@ -483,40 +516,45 @@ export function AdminApp() {
                 <button
                   type="button"
                   onClick={() => startEdit(listing)}
-                  className="min-h-10 border border-[var(--brand-navy)] px-3 text-xs font-semibold uppercase tracking-wide text-[var(--brand-navy)]"
+                  disabled={statusBusyId === listing.id}
+                  className="min-h-10 border border-[var(--brand-navy)] px-3 text-xs font-semibold uppercase tracking-wide text-[var(--brand-navy)] disabled:opacity-50"
                 >
                   Edit
                 </button>
                 {listing.status !== "listed" ? (
                   <button
                     type="button"
+                    disabled={statusBusyId === listing.id}
                     onClick={() => void setStatus(listing, "listed")}
-                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide"
+                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide disabled:opacity-50"
                   >
-                    Show
+                    {statusBusyId === listing.id ? "Saving…" : "Show"}
                   </button>
                 ) : (
                   <button
                     type="button"
+                    disabled={statusBusyId === listing.id}
                     onClick={() => void setStatus(listing, "rented")}
-                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide"
+                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide disabled:opacity-50"
                   >
-                    Mark rented
+                    {statusBusyId === listing.id ? "Saving…" : "Mark rented"}
                   </button>
                 )}
                 {listing.status !== "hidden" ? (
                   <button
                     type="button"
+                    disabled={statusBusyId === listing.id}
                     onClick={() => void setStatus(listing, "hidden")}
-                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide"
+                    className="min-h-10 border border-[var(--brand-line)] px-3 text-xs font-semibold uppercase tracking-wide disabled:opacity-50"
                   >
-                    Hide
+                    {statusBusyId === listing.id ? "Saving…" : "Hide"}
                   </button>
                 ) : null}
                 <button
                   type="button"
+                  disabled={statusBusyId === listing.id}
                   onClick={() => void removeListing(listing.id)}
-                  className="min-h-10 border border-red-200 px-3 text-xs font-semibold uppercase tracking-wide text-red-700"
+                  className="min-h-10 border border-red-200 px-3 text-xs font-semibold uppercase tracking-wide text-red-700 disabled:opacity-50"
                 >
                   Remove
                 </button>

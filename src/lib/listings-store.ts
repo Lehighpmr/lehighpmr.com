@@ -1,12 +1,24 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import { head, put } from "@vercel/blob";
+import { BlobNotFoundError, head, put } from "@vercel/blob";
 import type { Listing, ListingInput, ListingStatus } from "@/lib/listings-types";
 import { usesBlobStorage } from "@/lib/storage";
 
 const LOCAL_DATA_PATH = path.join(process.cwd(), "data", "listings.json");
-const BLOB_PATHNAME = "data/listings.json";
+/** Legacy single overwritten object (CDN-stale risk). Migrated away on write. */
+const LEGACY_BLOB_PATHNAME = "data/listings.json";
+/** Small pointer to the latest immutable listings snapshot. */
+const POINTER_PATHNAME = "data/listings-pointer.json";
+
+type ListingsPointer = {
+  pathname: string;
+  url: string;
+  updatedAt: number;
+};
+
+/** Write-through cache so same isolate does not re-read after a put. */
+let memoryCache: Listing[] | null = null;
 
 async function ensureLocalFile() {
   try {
@@ -27,27 +39,116 @@ async function readSeedListings(): Promise<Listing[]> {
   }
 }
 
-async function readFromBlob(): Promise<Listing[]> {
+function cacheListings(listings: Listing[]) {
+  memoryCache = listings.map((l) => ({ ...l, images: [...l.images] }));
+}
+
+function fromCache(): Listing[] | null {
+  if (!memoryCache) return null;
+  return memoryCache.map((l) => ({ ...l, images: [...l.images] }));
+}
+
+function bustUrl(url: string, token: string | number) {
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}v=${encodeURIComponent(String(token))}`;
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Blob fetch failed (${res.status})`);
+  }
+  return (await res.json()) as T;
+}
+
+async function readLegacyBlobListings(): Promise<Listing[] | null> {
   try {
-    const meta = await head(BLOB_PATHNAME);
-    const res = await fetch(meta.url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Blob fetch failed (${res.status})`);
-    const parsed = (await res.json()) as Listing[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    const seed = await readSeedListings();
-    await writeToBlob(seed);
-    return seed;
+    const meta = await head(LEGACY_BLOB_PATHNAME);
+    const version =
+      meta.uploadedAt instanceof Date
+        ? meta.uploadedAt.toISOString()
+        : String(meta.uploadedAt);
+    const parsed = await fetchJson<Listing[]>(bustUrl(meta.url, version));
+    return Array.isArray(parsed) ? parsed : null;
+  } catch (e) {
+    if (e instanceof BlobNotFoundError) return null;
+    throw e;
   }
 }
 
+async function readFromBlob(): Promise<Listing[]> {
+  const cached = fromCache();
+  if (cached) return cached;
+
+  try {
+    const pointerMeta = await head(POINTER_PATHNAME);
+    const version =
+      pointerMeta.uploadedAt instanceof Date
+        ? pointerMeta.uploadedAt.toISOString()
+        : String(pointerMeta.uploadedAt);
+    const pointer = await fetchJson<ListingsPointer>(
+      bustUrl(pointerMeta.url, version),
+    );
+    if (!pointer?.url) {
+      throw new Error("Listings pointer is missing url");
+    }
+    // Snapshot pathnames are immutable — safe to cache-bust by pointer updatedAt.
+    const parsed = await fetchJson<Listing[]>(
+      bustUrl(pointer.url, pointer.updatedAt || version),
+    );
+    if (!Array.isArray(parsed)) {
+      throw new Error("Blob listings payload is not an array");
+    }
+    cacheListings(parsed);
+    return fromCache() ?? parsed;
+  } catch (e) {
+    // Only fall through to migrate/seed when the pointer object is missing.
+    // Any other failure must surface — never overwrite good data with seed.
+    if (!(e instanceof BlobNotFoundError)) {
+      throw e;
+    }
+  }
+
+  // No pointer yet — migrate legacy object or seed once (never wipe existing).
+  const legacy = await readLegacyBlobListings();
+  if (legacy) {
+    await writeToBlob(legacy);
+    return fromCache() ?? legacy;
+  }
+
+  const seed = await readSeedListings();
+  await writeToBlob(seed);
+  return fromCache() ?? seed;
+}
+
 async function writeToBlob(listings: Listing[]) {
-  await put(BLOB_PATHNAME, `${JSON.stringify(listings, null, 2)}\n`, {
+  const pathname = `data/snapshots/${Date.now()}-${randomUUID().slice(0, 8)}.json`;
+  const snapshot = await put(
+    pathname,
+    `${JSON.stringify(listings, null, 2)}\n`,
+    {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: "application/json",
+      cacheControlMaxAge: 60,
+    },
+  );
+
+  const pointer: ListingsPointer = {
+    pathname: snapshot.pathname,
+    url: snapshot.url,
+    updatedAt: Date.now(),
+  };
+
+  await put(POINTER_PATHNAME, `${JSON.stringify(pointer)}\n`, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
+    cacheControlMaxAge: 60,
   });
+
+  cacheListings(listings);
 }
 
 async function readFromLocal(): Promise<Listing[]> {
@@ -142,6 +243,36 @@ export async function updateListing(
   listings[index] = listing;
   await writeAll(listings);
   return listing;
+}
+
+/** Partial update — only touches `status` (and availability label when rented). */
+export async function updateListingStatus(
+  id: string,
+  status: ListingStatus,
+  available?: string,
+): Promise<Listing | null> {
+  if (!["listed", "rented", "hidden"].includes(status)) {
+    throw new Error("Invalid status");
+  }
+  const listings = await readAllListings();
+  const index = listings.findIndex((l) => l.id === id);
+  if (index < 0) return null;
+  const current = listings[index];
+  const next: Listing = {
+    ...current,
+    status,
+    available:
+      available !== undefined
+        ? String(available).trim()
+        : status === "rented"
+          ? "Rented"
+          : status === "listed" && current.available === "Rented"
+            ? "Available now"
+            : current.available,
+  };
+  listings[index] = next;
+  await writeAll(listings);
+  return next;
 }
 
 export async function deleteListing(id: string): Promise<boolean> {

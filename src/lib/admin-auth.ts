@@ -85,7 +85,9 @@ export function cookieOptions(maxAgeSeconds = 30 * 24 * 60 * 60) {
   return {
     httpOnly: true,
     sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
+    // Always secure on Vercel HTTPS (NODE_ENV alone is enough in prod builds).
+    secure:
+      process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL),
     path: "/",
     maxAge: maxAgeSeconds,
   };

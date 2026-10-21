@@ -10,7 +10,7 @@ const body = Figtree({
 
 export const metadata: Metadata = {
   title: {
-    default: `${site.brand} · ${site.person}`,
+    default: site.brand,
     template: `%s · ${site.brand}`,
   },
   description: `${site.tagline}. ${site.heroSupport}`,

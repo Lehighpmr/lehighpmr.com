@@ -6,7 +6,8 @@
 export const site = {
   brand: "Lehigh Property Management & Realty",
   brandShort: "Lehigh",
-  person: "Elie Daher",
+  /** Temporarily blank on the public site until real launch (restore personal name later). */
+  person: "",
   tagline: "Serving the Allentown area and the entire Valley",
   announcement:
     "Now open in Whitehall — personal property management for the Lehigh Valley",
@@ -19,9 +20,9 @@ export const site = {
   },
   about: {
     heading: "Why hire us?",
-    eyebrow: "About Elie Daher",
+    eyebrow: "About our company",
     body: [
-      "Lehigh Property Management & Realty is a new local office in Whitehall, led by Elie Daher. The practice is fresh — the experience behind it is not.",
+      "Lehigh Property Management & Realty is a new local office in Whitehall. The practice is fresh — the experience behind it is not.",
       "Owners get established know-how with a personal, private-practice approach: clear communication, careful tenant placement, and day-to-day management that protects your investment without the corporate runaround.",
     ],
   },
@@ -72,7 +73,7 @@ export const site = {
     },
     {
       id: "contact",
-      title: "Talk with Elie",
+      title: "Talk with our team",
       body: "Have a property to manage? Reach out for a straightforward conversation.",
       href: "#contact",
       tone: "light" as const,

@@ -113,8 +113,8 @@ export default function HomePage() {
             Whitehall property management
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--brand-muted)] sm:text-lg">
-            {site.services.intro} Led by {site.person}, {site.brand} serves
-            owners across {site.tagline.toLowerCase()}.
+            {site.services.intro} {site.brand} serves owners across{" "}
+            {site.tagline.toLowerCase()}.
           </p>
           <Link
             href="#contact"
@@ -227,8 +227,8 @@ export default function HomePage() {
             Ready to talk about your property?
           </h2>
           <p className="mt-4 text-base text-white/85">
-            Reach {site.person} at the Whitehall office —{" "}
-            {site.address.line1}, {site.address.line2}.
+            Reach our team at the Whitehall office — {site.address.line1},{" "}
+            {site.address.line2}.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a

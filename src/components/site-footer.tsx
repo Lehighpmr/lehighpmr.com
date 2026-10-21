@@ -45,7 +45,6 @@ export function SiteFooter() {
               </span>
             </li>
           </ul>
-          <p className="mt-4 text-sm text-white/70">{site.person}</p>
         </div>
 
         <div>

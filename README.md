@@ -1,6 +1,6 @@
 # Lehigh Property Management & Realty
 
-Website for **Lehigh Property Management & Realty** (Elie Daher) — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+Website for **Lehigh Property Management & Realty** — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Run locally
 

@@ -5,7 +5,7 @@ import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Available Rentals",
-  description: `Homes and flats currently available through ${site.brand}, led by ${site.person}.`,
+  description: `Homes and flats currently available through ${site.brand}.`,
 };
 
 export default function RentalsPage() {
@@ -26,7 +26,7 @@ export default function RentalsPage() {
               href="/#contact"
               className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
             >
-              Contact {site.person}
+              Contact us
             </Link>
             .
           </p>

@@ -10,8 +10,8 @@ export const site = {
   person: "",
   tagline: "Serving the Allentown area and the entire Valley",
   announcement:
-    "Now open in Whitehall — personal property management for the Lehigh Valley",
-  heroHeadline: "Property management services in the Lehigh Valley",
+    "Now open in Whitehall, serving the Allentown area and the entire Valley",
+  heroHeadline: "Lehigh Property Management & Realty",
   heroSupport:
     "Local expertise for Allentown, Whitehall, and the entire Valley — professional management for owners who want their rentals handled with care.",
   address: {
@@ -108,8 +108,8 @@ export const site = {
   },
   contact: {
     email: "hello@lehighpm.example",
-    phone: "(610) 555-0148",
-    phoneDisplay: "610.555.0148",
+    phone: "(484) 714-6311",
+    phoneDisplay: "484-714-6311",
   },
   nav: [
     { href: "/", label: "Home" },

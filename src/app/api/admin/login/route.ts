@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
   ADMIN_COOKIE,
@@ -25,7 +26,16 @@ export async function POST(request: Request) {
   if (!verifyPassword(password)) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 });
   }
+
+  const token = createSessionToken();
+  const options = cookieOptions();
+
+  // Prefer the cookie store API so the session is committed on the response
+  // in App Router / Vercel (more reliable than only res.cookies.set).
+  const jar = await cookies();
+  jar.set(ADMIN_COOKIE, token, options);
+
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(ADMIN_COOKIE, createSessionToken(), cookieOptions());
+  res.cookies.set(ADMIN_COOKIE, token, options);
   return res;
 }

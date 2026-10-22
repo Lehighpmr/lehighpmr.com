@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,16 +17,17 @@ export default function AdminLoginPage() {
       body: JSON.stringify({ password }),
       credentials: "include",
     });
-    setLoading(false);
     if (!res.ok) {
+      setLoading(false);
       const data = (await res.json().catch(() => null)) as {
         error?: string;
       } | null;
       setError(data?.error || "Wrong password");
       return;
     }
-    router.replace("/admin");
-    router.refresh();
+    // Full navigation so the new session cookie is included on /admin SSR.
+    // Soft router.replace can race and bounce back to login ("nothing works").
+    window.location.assign("/admin");
   }
 
   return (

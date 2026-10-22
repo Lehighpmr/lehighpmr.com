@@ -81,6 +81,7 @@ export function AdminApp() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [blobConfigured, setBlobConfigured] = useState(true);
+  const [blobReachable, setBlobReachable] = useState(true);
   const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -91,8 +92,19 @@ export function AdminApp() {
       return;
     }
     if (me.ok) {
-      const info = (await me.json()) as { blobConfigured?: boolean };
+      const info = (await me.json()) as {
+        blobConfigured?: boolean;
+        blobReachable?: boolean | null;
+        blobError?: string;
+      };
       setBlobConfigured(Boolean(info.blobConfigured));
+      setBlobReachable(info.blobReachable !== false);
+      if (info.blobConfigured && info.blobReachable === false) {
+        setError(
+          info.blobError ||
+            "Vercel Blob is configured but not reachable. Check the Blob store connection and BLOB_READ_WRITE_TOKEN on Production.",
+        );
+      }
     }
     const res = await fetch("/api/admin/listings", { credentials: "include" });
     if (res.status === 401) {
@@ -100,7 +112,8 @@ export function AdminApp() {
       return;
     }
     if (!res.ok) {
-      setError("Could not load listings");
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(data?.error || `Could not load listings (${res.status})`);
       setLoading(false);
       return;
     }
@@ -280,6 +293,13 @@ export function AdminApp() {
       {error ? (
         <p className="rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
+        </p>
+      ) : null}
+
+      {blobConfigured && !blobReachable ? (
+        <p className="rounded-sm border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          Storage warning: Blob env is present but the store did not respond.
+          Saves will fail until Production Blob is connected.
         </p>
       ) : null}
 

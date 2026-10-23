@@ -107,7 +107,7 @@ export const site = {
     proposal: "Request a management consult",
   },
   contact: {
-    email: "hello@lehighpm.example",
+    email: "info@lehighpmr.com",
     phone: "(484) 484-8229",
     phoneDisplay: "484-484-8229",
   },

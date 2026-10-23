@@ -49,12 +49,6 @@ export default function HomePage() {
               >
                 {site.cta.proposal}
               </Link>
-              <Link
-                href="/rentals"
-                className="inline-flex min-h-12 items-center justify-center border border-white/70 bg-white/10 px-6 text-sm font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-              >
-                {site.cta.primary}
-              </Link>
             </div>
           </div>
         </div>

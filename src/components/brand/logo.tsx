@@ -13,8 +13,8 @@ type LogoProps = {
 };
 
 const sizeClass = {
-  // Modest bump vs prior nav size; still header-scale, not hero.
-  nav: "h-14 w-auto max-w-[220px] sm:h-16 sm:max-w-[280px]",
+  // Bigger header mark (still not a full-bleed hero logo).
+  nav: "h-[4.5rem] w-auto max-w-[min(92vw,22rem)] sm:h-24 sm:max-w-[28rem]",
   footer: "h-14 w-auto max-w-[220px] brightness-0 invert",
   hero: "h-auto w-full max-w-[18rem] sm:max-w-[22rem]",
 } as const;

@@ -49,23 +49,26 @@
 }
 
 /*
-  Professional PM layout (navy / white / gray) with Lehigh burgundy accent
-  drawn from the logo.
+  Same brand hex values as before; blue and burgundy roles swapped.
+  Former navy (#1a2744 / #121c33) is now the accent; former accent
+  (#7a1f2b / #9a3a45) is now the primary navy family.
 */
 :root {
-  --brand-navy: #1a2744;
-  --brand-navy-deep: #121c33;
+  /* Burgundy pair (was accent) now plays the navy/primary role */
+  --brand-navy: #9a3a45;
+  --brand-navy-deep: #7a1f2b;
   --brand-ink: #1f2430;
   --brand-muted: #5a6170;
-  --brand-accent: #7a1f2b;
-  --brand-accent-soft: #9a3a45;
+  /* Blue pair (was navy) now plays the accent role */
+  --brand-accent: #1a2744;
+  --brand-accent-soft: #121c33;
   --brand-surface: #ffffff;
   --brand-surface-soft: #f4f5f7;
   --brand-line: #d8dce3;
   --brand-hero-veil: linear-gradient(
     180deg,
-    rgba(18, 28, 51, 0.55) 0%,
-    rgba(18, 28, 51, 0.62) 100%
+    rgba(122, 31, 43, 0.55) 0%,
+    rgba(122, 31, 43, 0.68) 100%
   );
 
   --background: var(--brand-surface);

@@ -8,13 +8,10 @@ import { Logo } from "@/components/brand/logo";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
-const mid = Math.ceil(site.nav.length / 2);
-const navLeft = site.nav.slice(0, mid);
-const navRight = site.nav.slice(mid);
-
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const tel = site.contact.phone.replace(/\D/g, "");
 
   useEffect(() => {
     setOpen(false);
@@ -29,60 +26,49 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--brand-line)] bg-white">
-      <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:px-6">
-        {/* Desktop: left nav. Mobile: spacer so the logo stays visually centered. */}
+      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-4 sm:px-6 sm:py-5">
+        <Logo size="nav" align="center" priority />
+
+        {/* Desktop: one centered nav row under the logo */}
         <nav
-          aria-label="Primary left"
-          className="hidden items-center justify-end gap-0.5 md:flex"
+          aria-label="Primary"
+          className="mt-4 hidden flex-wrap items-center justify-center gap-x-1 gap-y-1 md:flex"
         >
-          {navLeft.map((link) => (
+          {site.nav.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="px-2.5 py-2 text-sm font-medium uppercase tracking-[0.06em] text-[var(--brand-navy)] transition-colors hover:text-[var(--brand-accent)] lg:px-3"
+              className="px-3 py-2 text-sm font-medium uppercase tracking-[0.06em] text-[var(--brand-navy)] transition-colors hover:text-[var(--brand-accent)]"
             >
               {link.label}
             </Link>
           ))}
         </nav>
-        <div className="size-10 md:hidden" aria-hidden />
 
-        <div className="flex justify-center justify-self-center">
-          <Logo size="nav" align="center" priority />
-        </div>
+        {/* Mobile: hamburger under logo */}
+        <button
+          type="button"
+          className="mt-3 inline-flex size-10 items-center justify-center text-[var(--brand-navy)] md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? <X className="size-6" /> : <Menu className="size-6" />}
+        </button>
 
-        <div className="flex items-center justify-end gap-0.5">
-          <nav
-            aria-label="Primary right"
-            className="hidden items-center gap-0.5 md:flex"
-          >
-            {navRight.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-2.5 py-2 text-sm font-medium uppercase tracking-[0.06em] text-[var(--brand-navy)] transition-colors hover:text-[var(--brand-accent)] lg:px-3"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <button
-            type="button"
-            className="inline-flex size-10 items-center justify-center text-[var(--brand-navy)] md:hidden"
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
-        </div>
+        <a
+          href={`tel:${tel}`}
+          className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.1em] text-[var(--brand-navy)] transition-colors hover:text-[var(--brand-accent)] sm:text-sm"
+        >
+          Click to call: {site.contact.phoneDisplay}
+        </a>
       </div>
 
       <div
         id="mobile-nav"
         className={cn(
-          "border-t border-[var(--brand-line)] bg-white md:hidden",
+          "w-full border-t border-[var(--brand-line)] bg-white md:hidden",
           open ? "block" : "hidden",
         )}
       >
@@ -92,7 +78,7 @@ export function SiteHeader() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="px-3 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-[var(--brand-navy)]"
+              className="px-3 py-3 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[var(--brand-navy)]"
             >
               {link.label}
             </Link>

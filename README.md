@@ -61,6 +61,6 @@ Photo uploads via the server route are limited to **4MB** (Vercel request body l
 | Marketing copy | `src/content/site.ts` |
 | Listings seed | `data/listings.json` |
 
-**Set:** address `779 3rd St, Whitehall, PA 18052`, phone `(484) 714-6311`, email `hello@lehighpm.example` (placeholder email).
+**Set:** address `779 3rd St, Whitehall, PA 18052`, phone `(484) 484-8229`, email `hello@lehighpm.example` (placeholder email).
 
 **Still placeholder:** social icon links; demo contact email domain.

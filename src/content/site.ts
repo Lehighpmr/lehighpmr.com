@@ -108,8 +108,8 @@ export const site = {
   },
   contact: {
     email: "hello@lehighpm.example",
-    phone: "(484) 714-6311",
-    phoneDisplay: "484-714-6311",
+    phone: "(484) 484-8229",
+    phoneDisplay: "484-484-8229",
   },
   nav: [
     { href: "/", label: "Home" },

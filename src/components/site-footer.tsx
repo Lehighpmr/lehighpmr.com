@@ -16,7 +16,9 @@ export function SiteFooter() {
           <p className="text-sm font-semibold uppercase tracking-[0.12em]">
             {site.brandShort} Property Management
           </p>
-          <Logo size="footer" className="mt-4" href="/" />
+          <div className="mt-4 inline-flex max-w-full items-center justify-center bg-white px-3 py-2">
+            <Logo size="footer" href="/" />
+          </div>
           <ul className="mt-6 space-y-3 text-sm text-white/90">
             <li>
               <a
@@ -87,11 +89,10 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/20">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-white/60 sm:px-6">
           <p>
             © {new Date().getFullYear()} {site.brand}. {site.tagline}.
           </p>
-          <p>Demo contact details for preview.</p>
         </div>
       </div>
     </footer>

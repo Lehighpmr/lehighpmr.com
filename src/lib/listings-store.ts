@@ -11,6 +11,19 @@ const LEGACY_BLOB_PATHNAME = "data/listings.json";
 /** Small pointer to the latest immutable listings snapshot. */
 const POINTER_PATHNAME = "data/listings-pointer.json";
 
+/** Launch seed demos — strip from store so public rentals stay empty until real adds. */
+const DEMO_LISTING_IDS = new Set([
+  "maple-2br",
+  "harbor-studio",
+  "cedar-3br",
+  "garden-1br",
+  "ridge-2br",
+]);
+
+function withoutDemoListings(listings: Listing[]) {
+  return listings.filter((l) => !DEMO_LISTING_IDS.has(l.id));
+}
+
 type ListingsPointer = {
   pathname: string;
   url: string;
@@ -30,10 +43,12 @@ async function ensureLocalFile() {
 }
 
 async function readSeedListings(): Promise<Listing[]> {
+  // Public launch: never reseed demo apartments — start empty; admin adds real ones.
   try {
     const raw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
     const parsed = JSON.parse(raw) as Listing[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return withoutDemoListings(parsed);
   } catch {
     return [];
   }
@@ -99,8 +114,13 @@ async function readFromBlob(): Promise<Listing[]> {
     if (!Array.isArray(parsed)) {
       throw new Error("Blob listings payload is not an array");
     }
-    cacheListings(parsed);
-    return fromCache() ?? parsed;
+    const cleaned = withoutDemoListings(parsed);
+    if (cleaned.length !== parsed.length) {
+      await writeToBlob(cleaned);
+      return fromCache() ?? cleaned;
+    }
+    cacheListings(cleaned);
+    return fromCache() ?? cleaned;
   } catch (e) {
     // Only fall through to migrate/seed when the pointer object is missing.
     // Any other failure must surface — never overwrite good data with seed.
@@ -109,11 +129,12 @@ async function readFromBlob(): Promise<Listing[]> {
     }
   }
 
-  // No pointer yet — migrate legacy object or seed once (never wipe existing).
+  // No pointer yet — migrate legacy (minus demos) or seed empty.
   const legacy = await readLegacyBlobListings();
   if (legacy) {
-    await writeToBlob(legacy);
-    return fromCache() ?? legacy;
+    const cleaned = withoutDemoListings(legacy);
+    await writeToBlob(cleaned);
+    return fromCache() ?? cleaned;
   }
 
   const seed = await readSeedListings();
@@ -169,7 +190,13 @@ async function writeToLocal(listings: Listing[]) {
 
 export async function readAllListings(): Promise<Listing[]> {
   if (usesBlobStorage()) return readFromBlob();
-  return readFromLocal();
+  const raw = await readFromLocal();
+  const local = withoutDemoListings(raw);
+  // Persist scrub so local demos don’t keep resurfacing.
+  if (local.length !== raw.length) {
+    await writeToLocal(local);
+  }
+  return local;
 }
 
 export async function readPublicListings(): Promise<Listing[]> {

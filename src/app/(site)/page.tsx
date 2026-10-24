@@ -104,11 +104,10 @@ export default function HomePage() {
       <section className="px-4 py-14 sm:px-6 sm:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)] sm:text-3xl">
-            Whitehall property management
+            {site.pitch.heading}
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--brand-muted)] sm:text-lg">
-            {site.services.intro} {site.brand} serves owners across{" "}
-            {site.tagline.toLowerCase()}.
+            {site.pitch.body}
           </p>
           <Link
             href="#contact"
@@ -181,28 +180,6 @@ export default function HomePage() {
           <div className="mt-8">
             <ServicesPanel />
           </div>
-        </div>
-      </section>
-
-      {/* Areas */}
-      <section className="border-t border-[var(--brand-line)] px-4 py-14 sm:px-6 sm:py-16">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)] sm:text-3xl">
-            {site.areas.heading}
-          </h2>
-          <p className="mt-3 max-w-2xl text-[var(--brand-muted)]">
-            {site.tagline}.
-          </p>
-          <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 md:grid-cols-5">
-            {site.areas.items.map((area) => (
-              <li
-                key={area}
-                className="border-b border-[var(--brand-line)] pb-2 text-sm font-medium text-[var(--brand-navy)]"
-              >
-                {area}
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 

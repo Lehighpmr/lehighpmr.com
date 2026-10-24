@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { site } from "@/content/site";
 import {
   formatBeds,
   formatPrice,
@@ -129,14 +130,31 @@ export function RentalsBrowser() {
   }
 
   if (listings.length === 0) {
+    const tel = site.contact.phone.replace(/\D/g, "");
     return (
       <div className="border border-dashed border-[var(--brand-line)] bg-[var(--brand-surface-soft)] px-6 py-16 text-center">
         <p className="text-2xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)]">
-          No rentals listed right now
+          No rentals available yet
         </p>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--brand-muted)]">
-          Check back soon, or contact the office if you’re looking for something
-          specific.
+        <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[var(--brand-muted)]">
+          {site.brand} is a new office and we don’t have apartments listed for
+          rent right now. Reach out if you’re looking for a home or want to list
+          a property with us.
+        </p>
+        <p className="mt-6 text-sm text-[var(--brand-ink)]">
+          <a
+            href={`tel:${tel}`}
+            className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
+          >
+            {site.contact.phone}
+          </a>
+          {" · "}
+          <a
+            href={`mailto:${site.contact.email}`}
+            className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
+          >
+            {site.contact.email}
+          </a>
         </p>
       </div>
     );

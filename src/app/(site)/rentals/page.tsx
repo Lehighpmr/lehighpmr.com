@@ -20,15 +20,15 @@ export default function RentalsPage() {
             Available rentals
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--brand-muted)]">
-            Current homes available through {site.brand}. Prefer to list with
-            us?{" "}
+            Browse homes listed through {site.brand}. Nothing available right
+            now? Reach out — or{" "}
             <Link
               href="/#contact"
               className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
             >
-              Contact us
-            </Link>
-            .
+              contact us
+            </Link>{" "}
+            if you’d like to list a property.
           </p>
         </div>
       </div>

@@ -1,17 +1,18 @@
 /**
- * Site copy for Lehigh Property Management & Realty.
+ * Site copy for Lehigh Property Management & Realty LLC.
  * Logo: `public/brand/lehigh-logo.jpg` → `src/components/brand/logo.tsx`
+ * (Logo artwork is not edited — LLC is text-only.)
  */
 
 export const site = {
-  brand: "Lehigh Property Management & Realty",
+  brand: "Lehigh Property Management & Realty LLC",
   brandShort: "Lehigh",
   /** Temporarily blank on the public site until real launch (restore personal name later). */
   person: "",
   tagline: "Serving the Allentown area and the entire Valley",
   announcement:
     "Now open in Whitehall, serving the Allentown area and the entire Valley",
-  heroHeadline: "Lehigh Property Management & Realty",
+  heroHeadline: "Lehigh Property Management & Realty LLC",
   heroSupport:
     "Local expertise for Allentown, Whitehall, and the entire Valley — professional management for owners who want their rentals handled with care.",
   address: {
@@ -22,9 +23,14 @@ export const site = {
     heading: "Why hire us?",
     eyebrow: "About our company",
     body: [
-      "Lehigh Property Management & Realty is a new local office in Whitehall. The practice is fresh — the experience behind it is not.",
+      "Lehigh Property Management & Realty LLC is a new local office in Whitehall. The practice is fresh — the experience behind it is not.",
       "Owners get established know-how with a personal, private-practice approach: clear communication, careful tenant placement, and day-to-day management that protects your investment without the corporate runaround.",
     ],
+  },
+  /** Mid-page company pitch (home). */
+  pitch: {
+    heading: "Lehigh Property Management and Realty LLC",
+    body: "Our property management services are practical, professional, and designed to keep your rental performing at its best—from marketing and tenant screening through inspections and ongoing tenant requests. We also assist clients with buying or selling property. Lehigh Property Management & Realty LLC serves owners throughout the Allentown area and the entire Lehigh Valley.",
   },
   services: {
     heading: "Lehigh Valley property management services",
@@ -81,7 +87,7 @@ export const site = {
     {
       id: "rentals",
       title: "Available rentals",
-      body: "Click here to view our rental listings.",
+      body: "We’re a new office — check current availability or contact us about upcoming homes.",
       href: "/rentals",
       tone: "accent" as const,
     },
@@ -120,7 +126,7 @@ export const site = {
   ],
   logo: {
     src: "/brand/lehigh-logo.jpg",
-    alt: "Lehigh Property Management & Realty — Serving the Allentown area and the entire Valley",
+    alt: "Lehigh Property Management & Realty LLC — Serving the Allentown area and the entire Valley",
   },
 } as const;
 

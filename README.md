@@ -1,6 +1,6 @@
-# Lehigh Property Management & Realty
+# Lehigh Property Management & Realty LLC
 
-Website for **Lehigh Property Management & Realty** — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+Website for **Lehigh Property Management & Realty LLC** — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ Open [http://127.0.0.1:4327](http://127.0.0.1:4327).
    - `ADMIN_PASSWORD` — a strong password (**not** `lehigh-demo-2026`)
    - `ADMIN_SESSION_SECRET` — a long random string (recommended)
 3. In the project **Storage** tab, create a **Blob** store (Public access is fine) and connect it to this project. Vercel adds `BLOB_READ_WRITE_TOKEN` (and OIDC vars when connected).
-4. Deploy. Without Blob, the marketing site and seed rentals still load, but admin create/edit/upload will return an error until Blob is connected.
+4. Deploy. Without Blob, the marketing site still loads (public rentals start empty); admin create/edit/upload needs Blob connected.
 5. Open `/admin/login` with your production `ADMIN_PASSWORD`.
 
 Production login is **blocked** if `ADMIN_PASSWORD` is missing or still set to the demo value.
@@ -59,8 +59,8 @@ Photo uploads via the server route are limited to **4MB** (Vercel request body l
 | --- | --- |
 | Logo | `public/brand/lehigh-logo.jpg` |
 | Marketing copy | `src/content/site.ts` |
-| Listings seed | `data/listings.json` |
+| Listings data (starts empty) | `data/listings.json` |
 
 **Set:** address `779 3rd St, Whitehall, PA 18052`, phone `(484) 484-8229`, email `info@lehighpmr.com`.
 
-**Still placeholder:** social icon links.
+**Still placeholder:** Instagram link (coming soon; Facebook removed).

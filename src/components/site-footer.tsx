@@ -14,7 +14,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 md:gap-8 md:py-16">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.12em]">
-            {site.brandShort} Property Management
+            {site.brand}
           </p>
           <div className="mt-4 inline-flex max-w-full items-center justify-center bg-white px-3 py-2">
             <Logo size="footer" href="/" />
@@ -65,15 +65,16 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex gap-3 text-white/80" aria-hidden>
-            <span className="inline-flex size-9 items-center justify-center border border-white/30 text-xs font-semibold">
-              f
-            </span>
-            <span className="inline-flex size-9 items-center justify-center border border-white/30 text-xs font-semibold">
+          <div className="mt-5 flex gap-3 text-white/80">
+            <span
+              className="inline-flex size-9 items-center justify-center border border-white/30 text-xs font-semibold"
+              title="Instagram coming soon"
+              aria-label="Instagram coming soon"
+            >
               ig
             </span>
           </div>
-          <p className="mt-2 text-xs text-white/50">Social links coming soon</p>
+          <p className="mt-2 text-xs text-white/50">Instagram coming soon</p>
         </div>
 
         <div>

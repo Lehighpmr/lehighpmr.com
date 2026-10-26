@@ -20,7 +20,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <div className="relative min-h-[52vh] sm:min-h-[60vh]">
           <Image
-            src="/images/hero-interior.jpg"
+            src="/images/allentown-skyline.jpg"
             alt="Bright rental living space ready for tenants"
             fill
             priority
@@ -123,7 +123,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2 md:items-center md:gap-12">
           <div className="relative aspect-[4/3] overflow-hidden bg-[var(--brand-line)]">
             <Image
-              src="/images/hero.jpg"
+              src="/images/hero-interior.jpg"
               alt="Neighborhood street in the Lehigh Valley area"
               fill
               className="object-cover"

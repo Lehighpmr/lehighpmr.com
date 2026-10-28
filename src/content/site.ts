@@ -9,12 +9,12 @@ export const site = {
   brandShort: "Lehigh",
   /** Temporarily blank on the public site until real launch (restore personal name later). */
   person: "",
-  tagline: "Serving the Allentown area and the entire Valley",
+  tagline: "Serving the Allentown area",
   announcement:
-    "Now open in Whitehall, serving the Allentown area and the entire Valley",
+    "Now open in Whitehall, serving the Allentown area",
   heroHeadline: "Lehigh Property Management & Realty LLC",
   heroSupport:
-    "Local expertise for Allentown, Whitehall, and the entire Valley — professional management for owners who want their rentals handled with care.",
+    "Local expertise for Allentown and Whitehall — professional management for owners who want their rentals handled with care.",
   address: {
     line1: "779 3rd St",
     line2: "Whitehall, PA 18052",
@@ -30,10 +30,10 @@ export const site = {
   /** Mid-page company pitch (home). */
   pitch: {
     heading: "Lehigh Property Management and Realty LLC",
-    body: "Our property management services are practical, professional, and designed to keep your rental performing at its best—from marketing and tenant screening through inspections and ongoing tenant requests. We also assist clients with buying or selling property. Lehigh Property Management & Realty LLC serves owners throughout the Allentown area and the entire Lehigh Valley.",
+    body: "Our property management services are practical, professional, and designed to keep your rental performing at its best—from marketing and tenant screening through inspections and ongoing tenant requests. We also assist clients with buying or selling property. Lehigh Property Management & Realty LLC serves owners throughout the Allentown area.",
   },
   services: {
-    heading: "Lehigh Valley property management services",
+    heading: "Lehigh Property Management Services",
     intro:
       "Our property management services are practical, professional, and built to keep your rental performing — from marketing and screening through inspections and tenant requests.",
     items: [
@@ -73,7 +73,7 @@ export const site = {
     {
       id: "pm",
       title: "Property management",
-      body: "Looking for professional property management in the Lehigh Valley?",
+      body: "Looking for professional property management in the Allentown area?",
       href: "#services",
       tone: "light" as const,
     },
@@ -104,7 +104,7 @@ export const site = {
       "Northampton",
       "Lehigh County",
       "Northampton County",
-      "Surrounding Valley towns",
+      "Surrounding towns",
     ],
   },
   cta: {
@@ -126,7 +126,7 @@ export const site = {
   ],
   logo: {
     src: "/brand/lehigh-logo.jpg",
-    alt: "Lehigh Property Management & Realty LLC — Serving the Allentown area and the entire Valley",
+    alt: "Lehigh Property Management & Realty LLC — Serving the Allentown area",
   },
 } as const;
 

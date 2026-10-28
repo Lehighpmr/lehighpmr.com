@@ -124,7 +124,7 @@ export default function HomePage() {
           <div className="relative aspect-[4/3] overflow-hidden bg-[var(--brand-line)]">
             <Image
               src="/images/hero-interior.jpg"
-              alt="Neighborhood street in the Lehigh Valley area"
+              alt="Neighborhood street in the Allentown area"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"

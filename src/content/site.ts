@@ -91,6 +91,13 @@ export const site = {
       href: "/rentals",
       tone: "accent" as const,
     },
+    {
+      id: "buySell",
+      title: "Buy or Sell",
+      body: "Thinking of buying or selling a property? Contact us",
+      href: "#contact",
+      tone: "light" as const,
+    },
   ],
   areas: {
     heading: "Areas we serve",

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ClipboardList, Home, KeyRound } from "lucide-react";
+import { ClipboardList, Handshake, Home, KeyRound } from "lucide-react";
 import { ServicesPanel } from "@/components/services-panel";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ const actionIcons = {
   pm: Home,
   contact: ClipboardList,
   rentals: KeyRound,
+  buySell: Handshake,
 } as const;
 
 export default function HomePage() {
@@ -56,7 +57,7 @@ export default function HomePage() {
 
       {/* Action cards */}
       <section className="relative z-10 -mt-8 px-4 sm:-mt-10 sm:px-6">
-        <div className="mx-auto grid max-w-6xl gap-3 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {site.actionCards.map((card) => {
             const Icon = actionIcons[card.id as keyof typeof actionIcons];
             return (

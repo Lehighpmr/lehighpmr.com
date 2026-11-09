@@ -2,7 +2,14 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { BlobNotFoundError, head, put } from "@vercel/blob";
-import type { Listing, ListingInput, ListingStatus } from "@/lib/listings-types";
+import {
+  addressFromParts,
+  coerceListing,
+  type Listing,
+  type ListingInput,
+  type ListingRecord,
+  type ListingStatus,
+} from "@/lib/listings-types";
 import { usesBlobStorage } from "@/lib/storage";
 
 const LOCAL_DATA_PATH = path.join(process.cwd(), "data", "listings.json");
@@ -22,6 +29,27 @@ const DEMO_LISTING_IDS = new Set([
 
 function withoutDemoListings(listings: Listing[]) {
   return listings.filter((l) => !DEMO_LISTING_IDS.has(l.id));
+}
+
+/** Parse stored JSON (may still have neighborhood/area) into address listings. */
+function parseStoredListings(raw: unknown): Listing[] {
+  if (!Array.isArray(raw)) return [];
+  return (raw as ListingRecord[])
+    .map((row) => coerceListing(row))
+    .filter((l): l is Listing => Boolean(l));
+}
+
+/** True when raw rows still use legacy neighborhood/area without address. */
+function needsAddressMigration(raw: unknown): boolean {
+  if (!Array.isArray(raw)) return false;
+  return (raw as ListingRecord[]).some((row) => {
+    if (!row || typeof row !== "object") return false;
+    const hasAddress = Boolean(String(row.address || "").trim());
+    const hasLegacy =
+      Boolean(String(row.neighborhood || "").trim()) ||
+      Boolean(String(row.area || "").trim());
+    return !hasAddress && hasLegacy;
+  });
 }
 
 type ListingsPointer = {
@@ -46,9 +74,7 @@ async function readSeedListings(): Promise<Listing[]> {
   // Public launch: never reseed demo apartments — start empty; admin adds real ones.
   try {
     const raw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
-    const parsed = JSON.parse(raw) as Listing[];
-    if (!Array.isArray(parsed)) return [];
-    return withoutDemoListings(parsed);
+    return withoutDemoListings(parseStoredListings(JSON.parse(raw)));
   } catch {
     return [];
   }
@@ -83,8 +109,8 @@ async function readLegacyBlobListings(): Promise<Listing[] | null> {
       meta.uploadedAt instanceof Date
         ? meta.uploadedAt.toISOString()
         : String(meta.uploadedAt);
-    const parsed = await fetchJson<Listing[]>(bustUrl(meta.url, version));
-    return Array.isArray(parsed) ? parsed : null;
+    const parsed = await fetchJson<unknown>(bustUrl(meta.url, version));
+    return Array.isArray(parsed) ? parseStoredListings(parsed) : null;
   } catch (e) {
     if (e instanceof BlobNotFoundError) return null;
     throw e;
@@ -108,14 +134,17 @@ async function readFromBlob(): Promise<Listing[]> {
       throw new Error("Listings pointer is missing url");
     }
     // Snapshot pathnames are immutable — safe to cache-bust by pointer updatedAt.
-    const parsed = await fetchJson<Listing[]>(
+    const rawPayload = await fetchJson<unknown>(
       bustUrl(pointer.url, pointer.updatedAt || version),
     );
-    if (!Array.isArray(parsed)) {
+    if (!Array.isArray(rawPayload)) {
       throw new Error("Blob listings payload is not an array");
     }
+    const parsed = parseStoredListings(rawPayload);
     const cleaned = withoutDemoListings(parsed);
-    if (cleaned.length !== parsed.length) {
+    const migrated =
+      cleaned.length !== parsed.length || needsAddressMigration(rawPayload);
+    if (migrated) {
       await writeToBlob(cleaned);
       return fromCache() ?? cleaned;
     }
@@ -175,8 +204,7 @@ async function writeToBlob(listings: Listing[]) {
 async function readFromLocal(): Promise<Listing[]> {
   await ensureLocalFile();
   const raw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
-  const parsed = JSON.parse(raw) as Listing[];
-  return Array.isArray(parsed) ? parsed : [];
+  return parseStoredListings(JSON.parse(raw));
 }
 
 async function writeToLocal(listings: Listing[]) {
@@ -190,10 +218,18 @@ async function writeToLocal(listings: Listing[]) {
 
 export async function readAllListings(): Promise<Listing[]> {
   if (usesBlobStorage()) return readFromBlob();
-  const raw = await readFromLocal();
+  await ensureLocalFile();
+  const fileRaw = await fs.readFile(LOCAL_DATA_PATH, "utf8");
+  let parsedUnknown: unknown = [];
+  try {
+    parsedUnknown = JSON.parse(fileRaw);
+  } catch {
+    parsedUnknown = [];
+  }
+  const raw = parseStoredListings(parsedUnknown);
   const local = withoutDemoListings(raw);
-  // Persist scrub so local demos don’t keep resurfacing.
-  if (local.length !== raw.length) {
+  // Persist scrub + address migration so legacy fields don’t keep resurfacing.
+  if (local.length !== raw.length || needsAddressMigration(parsedUnknown)) {
     await writeToLocal(local);
   }
   return local;
@@ -234,8 +270,7 @@ function normalize(input: ListingInput, existingId?: string): Listing {
       input.id ||
       `${slugify(input.title) || "listing"}-${randomUUID().slice(0, 8)}`,
     title: String(input.title || "").trim(),
-    neighborhood: String(input.neighborhood || "").trim(),
-    area: String(input.area || "").trim(),
+    address: addressFromParts(input),
     price: Number(input.price) || 0,
     beds: Number(input.beds) || 0,
     baths: Number(input.baths) || 0,

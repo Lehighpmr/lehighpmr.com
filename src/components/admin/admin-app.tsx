@@ -13,8 +13,7 @@ import { cn } from "@/lib/utils";
 
 type FormState = {
   title: string;
-  neighborhood: string;
-  area: string;
+  address: string;
   price: string;
   beds: string;
   baths: string;
@@ -27,8 +26,7 @@ type FormState = {
 
 const emptyForm = (): FormState => ({
   title: "",
-  neighborhood: "",
-  area: "",
+  address: "",
   price: "",
   beds: "1",
   baths: "1",
@@ -42,8 +40,7 @@ const emptyForm = (): FormState => ({
 function toForm(listing: Listing): FormState {
   return {
     title: listing.title,
-    neighborhood: listing.neighborhood,
-    area: listing.area,
+    address: listing.address,
     price: String(listing.price),
     beds: String(listing.beds),
     baths: String(listing.baths),
@@ -58,8 +55,7 @@ function toForm(listing: Listing): FormState {
 function toPayload(form: FormState) {
   return {
     title: form.title,
-    neighborhood: form.neighborhood,
-    area: form.area,
+    address: form.address,
     price: Number(form.price) || 0,
     beds: Number(form.beds) || 0,
     baths: Number(form.baths) || 0,
@@ -320,26 +316,17 @@ export function AdminApp() {
               className="h-11 w-full border border-[var(--brand-line)] px-3 text-base"
             />
           </Field>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Neighborhood">
-              <input
-                required
-                value={form.neighborhood}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, neighborhood: e.target.value }))
-                }
-                className="h-11 w-full border border-[var(--brand-line)] px-3 text-base"
-              />
-            </Field>
-            <Field label="Area">
-              <input
-                required
-                value={form.area}
-                onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}
-                className="h-11 w-full border border-[var(--brand-line)] px-3 text-base"
-              />
-            </Field>
-          </div>
+          <Field label="Address">
+            <input
+              required
+              value={form.address}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, address: e.target.value }))
+              }
+              placeholder="Street, city, state"
+              className="h-11 w-full border border-[var(--brand-line)] px-3 text-base"
+            />
+          </Field>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Field label="Rent / mo">
               <input
@@ -520,7 +507,7 @@ export function AdminApp() {
                         {listing.title}
                       </p>
                       <p className="text-sm text-[var(--brand-muted)]">
-                        {listing.neighborhood} · {listing.area}
+                        {listing.address}
                       </p>
                     </div>
                     <StatusBadge status={listing.status} />

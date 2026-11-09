@@ -3,13 +3,6 @@
 import Image from "next/image";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { site } from "@/content/site";
 import {
   formatBeds,
@@ -20,37 +13,19 @@ import {
 
 type Filters = {
   query: string;
-  neighborhood: string;
-  area: string;
   maxPrice: string;
 };
-
-const ALL = "all";
 
 function filterListings(items: Listing[], filters: Filters) {
   const q = filters.query.trim().toLowerCase();
   const max = filters.maxPrice ? Number(filters.maxPrice) : null;
 
   return items.filter((listing) => {
-    if (
-      filters.neighborhood !== ALL &&
-      listing.neighborhood !== filters.neighborhood
-    ) {
-      return false;
-    }
-    if (filters.area !== ALL && listing.area !== filters.area) {
-      return false;
-    }
     if (max !== null && !Number.isNaN(max) && listing.price > max) {
       return false;
     }
     if (!q) return true;
-    const haystack = [
-      listing.title,
-      listing.neighborhood,
-      listing.area,
-      listing.blurb,
-    ]
+    const haystack = [listing.title, listing.address, listing.blurb]
       .join(" ")
       .toLowerCase();
     return haystack.includes(q);
@@ -63,8 +38,6 @@ export function RentalsBrowser() {
   const [loadError, setLoadError] = useState("");
   const [filters, setFilters] = useState<Filters>({
     query: "",
-    neighborhood: ALL,
-    area: ALL,
     maxPrice: "",
   });
   const deferred = useDeferredValue(filters);
@@ -73,15 +46,6 @@ export function RentalsBrowser() {
     [listings, deferred],
   );
   const isStale = deferred !== filters;
-
-  const neighborhoods = useMemo(
-    () => Array.from(new Set(listings.map((l) => l.neighborhood))).sort(),
-    [listings],
-  );
-  const areas = useMemo(
-    () => Array.from(new Set(listings.map((l) => l.area))).sort(),
-    [listings],
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -162,7 +126,7 @@ export function RentalsBrowser() {
 
   return (
     <div className="space-y-10">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm">
           <span className="text-[var(--brand-muted)]">Search</span>
           <Input
@@ -170,56 +134,9 @@ export function RentalsBrowser() {
             onChange={(e) =>
               setFilters((f) => ({ ...f, query: e.target.value }))
             }
-            placeholder="Neighborhood, title…"
+            placeholder="Address, title…"
             className="h-10 bg-white"
           />
-        </label>
-
-        <label className="space-y-1.5 text-sm">
-          <span className="text-[var(--brand-muted)]">Neighborhood</span>
-          <Select
-            value={filters.neighborhood}
-            onValueChange={(value) =>
-              setFilters((f) => ({
-                ...f,
-                neighborhood: value ?? ALL,
-              }))
-            }
-          >
-            <SelectTrigger className="h-10 w-full bg-white">
-              <SelectValue placeholder="All neighborhoods" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All neighborhoods</SelectItem>
-              {neighborhoods.map((n) => (
-                <SelectItem key={n} value={n}>
-                  {n}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-
-        <label className="space-y-1.5 text-sm">
-          <span className="text-[var(--brand-muted)]">Area</span>
-          <Select
-            value={filters.area}
-            onValueChange={(value) =>
-              setFilters((f) => ({ ...f, area: value ?? ALL }))
-            }
-          >
-            <SelectTrigger className="h-10 w-full bg-white">
-              <SelectValue placeholder="All areas" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All areas</SelectItem>
-              {areas.map((a) => (
-                <SelectItem key={a} value={a}>
-                  {a}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </label>
 
         <label className="space-y-1.5 text-sm">
@@ -248,8 +165,6 @@ export function RentalsBrowser() {
             onReset={() =>
               setFilters({
                 query: "",
-                neighborhood: ALL,
-                area: ALL,
                 maxPrice: "",
               })
             }
@@ -284,7 +199,7 @@ export function RentalsBrowser() {
                     </p>
                   </div>
                   <p className="mt-1 text-sm text-[var(--brand-muted)]">
-                    {listing.neighborhood} · {listing.area}
+                    {listing.address}
                   </p>
                   <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--brand-ink)]/85">
                     {listing.blurb}
@@ -314,8 +229,8 @@ function EmptyState({ onReset }: { onReset: () => void }) {
         No rentals match these filters
       </p>
       <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--brand-muted)]">
-        Try widening the neighborhood or raising the max rent. You can also
-        clear filters and browse everything currently listed.
+        Try a different search or raising the max rent. You can also clear
+        filters and browse everything currently listed.
       </p>
       <button
         type="button"

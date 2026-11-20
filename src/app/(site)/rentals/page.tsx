@@ -2,13 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RentalsBrowser } from "@/components/rentals/rentals-browser";
 import { site } from "@/content/site";
+import { readPublicListings } from "@/lib/listings-store";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Available Rentals",
   description: `Homes and flats currently available through ${site.brand}.`,
 };
 
-export default function RentalsPage() {
+export default async function RentalsPage() {
+  let initialListings: Awaited<ReturnType<typeof readPublicListings>> = [];
+  try {
+    initialListings = await readPublicListings();
+  } catch {
+    initialListings = [];
+  }
+
   return (
     <div className="pb-16">
       <div className="border-b border-[var(--brand-line)] bg-[var(--brand-surface-soft)] px-4 py-10 sm:px-6 sm:py-12">
@@ -33,7 +43,7 @@ export default function RentalsPage() {
         </div>
       </div>
       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
-        <RentalsBrowser />
+        <RentalsBrowser initialListings={initialListings} />
       </div>
     </div>
   );

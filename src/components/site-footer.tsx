@@ -66,15 +66,27 @@ export function SiteFooter() {
             ))}
           </ul>
           <div className="mt-5 flex gap-3 text-white/80">
-            <span
-              className="inline-flex size-9 items-center justify-center border border-white/30 text-xs font-semibold"
-              title="Instagram coming soon"
-              aria-label="Instagram coming soon"
+            <a
+              href={site.social.instagram.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex size-9 items-center justify-center border border-white/30 text-xs font-semibold transition-colors hover:border-white hover:text-white"
+              aria-label={`Instagram ${site.social.instagram.label}`}
+              title={site.social.instagram.label}
             >
               ig
-            </span>
+            </a>
           </div>
-          <p className="mt-2 text-xs text-white/50">Instagram coming soon</p>
+          <p className="mt-2 text-xs text-white/50">
+            <a
+              href={site.social.instagram.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 hover:underline"
+            >
+              Instagram {site.social.instagram.label}
+            </a>
+          </p>
         </div>
 
         <div>
@@ -90,10 +102,11 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/20">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-white/60 sm:px-6">
+        <div className="mx-auto max-w-6xl space-y-2 px-4 py-4 text-xs text-white/60 sm:px-6">
           <p>
             © {new Date().getFullYear()} {site.brand}. {site.tagline}.
           </p>
+          <p>{site.equalHousing}</p>
         </div>
       </div>
     </footer>

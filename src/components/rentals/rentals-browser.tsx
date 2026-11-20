@@ -16,6 +16,8 @@ type Filters = {
   maxPrice: string;
 };
 
+const FETCH_TIMEOUT_MS = 8000;
+
 function filterListings(items: Listing[], filters: Filters) {
   const q = filters.query.trim().toLowerCase();
   const max = filters.maxPrice ? Number(filters.maxPrice) : null;
@@ -32,9 +34,13 @@ function filterListings(items: Listing[], filters: Filters) {
   });
 }
 
-export function RentalsBrowser() {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [loading, setLoading] = useState(true);
+export function RentalsBrowser({
+  initialListings = [],
+}: {
+  initialListings?: Listing[];
+}) {
+  const [listings, setListings] = useState<Listing[]>(initialListings);
+  const [loading, setLoading] = useState(initialListings.length === 0);
   const [loadError, setLoadError] = useState("");
   const [filters, setFilters] = useState<Filters>({
     query: "",
@@ -49,26 +55,44 @@ export function RentalsBrowser() {
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timer = window.setTimeout(
+      () => controller.abort(),
+      FETCH_TIMEOUT_MS,
+    );
+
     (async () => {
       try {
-        const res = await fetch("/api/listings", { cache: "no-store" });
+        const res = await fetch("/api/listings", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error("bad response");
         const data = (await res.json()) as { listings: Listing[] };
         if (!cancelled) {
           setListings(data.listings || []);
+          setLoadError("");
           setLoading(false);
         }
       } catch {
         if (!cancelled) {
-          setLoadError("Could not load rentals right now.");
+          // Keep any SSR initial data; only error if we have nothing to show.
+          if (initialListings.length === 0) {
+            setLoadError("Could not load rentals right now.");
+          }
           setLoading(false);
         }
+      } finally {
+        window.clearTimeout(timer);
       }
     })();
+
     return () => {
       cancelled = true;
+      controller.abort();
+      window.clearTimeout(timer);
     };
-  }, []);
+  }, [initialListings.length]);
 
   if (loading) {
     return (
@@ -96,29 +120,34 @@ export function RentalsBrowser() {
   if (listings.length === 0) {
     const tel = site.contact.phone.replace(/\D/g, "");
     return (
-      <div className="border border-dashed border-[var(--brand-line)] bg-[var(--brand-surface-soft)] px-6 py-16 text-center">
-        <p className="text-2xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)]">
-          No rentals available yet
-        </p>
-        <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[var(--brand-muted)]">
-          {site.brand} is a new office and we don’t have apartments listed for
-          rent right now. Reach out if you’re looking for a home or want to list
-          a property with us.
-        </p>
-        <p className="mt-6 text-sm text-[var(--brand-ink)]">
-          <a
-            href={`tel:${tel}`}
-            className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
-          >
-            {site.contact.phone}
-          </a>
-          {" · "}
-          <a
-            href={`mailto:${site.contact.email}`}
-            className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
-          >
-            {site.contact.email}
-          </a>
+      <div className="space-y-6">
+        <div className="border border-dashed border-[var(--brand-line)] bg-[var(--brand-surface-soft)] px-6 py-16 text-center">
+          <p className="text-2xl font-bold uppercase tracking-[0.04em] text-[var(--brand-navy)]">
+            No rentals available yet
+          </p>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[var(--brand-muted)]">
+            {site.brand} is a new office and we don’t have apartments listed for
+            rent right now. Reach out if you’re looking for a home or want to
+            list a property with us.
+          </p>
+          <p className="mt-6 text-sm text-[var(--brand-ink)]">
+            <a
+              href={`tel:${tel}`}
+              className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
+            >
+              {site.contact.phone}
+            </a>
+            {" · "}
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="font-semibold text-[var(--brand-accent)] underline-offset-2 hover:underline"
+            >
+              {site.contact.email}
+            </a>
+          </p>
+        </div>
+        <p className="text-center text-xs leading-relaxed text-[var(--brand-muted)]">
+          {site.equalHousing}
         </p>
       </div>
     );
@@ -218,6 +247,10 @@ export function RentalsBrowser() {
           </ul>
         )}
       </div>
+
+      <p className="text-center text-xs leading-relaxed text-[var(--brand-muted)]">
+        {site.equalHousing}
+      </p>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-# Lehigh Property Management & Realty LLC
+# Lehigh Property Management and Realty LLC
 
-Website for **Lehigh Property Management & Realty LLC** — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+Website for **Lehigh Property Management and Realty LLC** — home, public rentals, and a small password-protected admin to manage listings. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Run locally
 
@@ -61,6 +61,4 @@ Photo uploads via the server route are limited to **4MB** (Vercel request body l
 | Marketing copy | `src/content/site.ts` |
 | Listings data (starts empty) | `data/listings.json` |
 
-**Set:** address `779 3rd St, Whitehall, PA 18052`, phone `(484) 484-8229`, email `info@lehighpmr.com`.
-
-**Still placeholder:** Instagram link (coming soon; Facebook removed).
+**Set:** address `779 3rd St, Suite 101, Whitehall, PA 18052`, phone `(484) 484-8229`, email `info@lehighpmr.com`, Instagram [@lehighpmr](https://www.instagram.com/lehighpmr/).
